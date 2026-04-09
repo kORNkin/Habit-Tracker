@@ -83,6 +83,14 @@ void ClearScreen(){
     cout << "\033[2J\033[1;1H\n";
 }
 
+// Gen AI 
+void ClearPreviousLines(int n) {
+    for (int i = 0; i < n; ++i) {
+        cout << "\033[A\33[2K\r" << flush;
+    }
+}
+// ----------
+
 Date DateToStruct(string input_date){
     string tmp, y = "", m = "", d = "";
     int idx = 0;
@@ -270,6 +278,12 @@ void PrintHabitStatus(){
     }
     
     cout << "\n--------------------------------------------------\n";
+}
+
+string PreviousMonth(string y, string m){
+    if(stoi(m) == 1){
+        return to_string(stoi(y) - 1) + "-12";
+    }else return y + "-" + to_string(stoi(m) - 1);
 }
 
 string HeatColor(int completed, int total) {
@@ -641,8 +655,10 @@ void ManageMyHabits(){
 }
 
 void PersonalDashboard(string input_date){
+    ClearScreen();
+
     if(input_date == "") input_date = CurrentDate(0);
-    Date current = DateToStruct(input_date); 
+    Date current = DateToStruct(DateFormatting(input_date)); 
 
     //Streak Stat
     Streak streak;
@@ -671,25 +687,28 @@ void PersonalDashboard(string input_date){
     cout << left << setw(10) << (compareLastWeek >= 0? "↑ " : "↓ ") + to_string(abs(compareLastWeek)) + "% vs last week";
 
     cout << "\n\n\n";
+
     //Heat Map
+    cout << MONTH[stoi(current.m) - 1] << ", " << current.y << '\n';
     PrintCalendar(current.m, current.y);
 
     cout << "\n--------------------------------------------------------------------\n";
-    cout << "[1] - · [2] - · [q] Back to Menu\nInput command: ";
+    cout << "[1] Previous Month · [2] - · [q] Back to Menu\nInput command: ";
     string cmd;
     GetLine(cmd);   
 
+    bool invalidCheck = 0;
     while(!IsValidCmd(cmd, 3)){
-        ClearScreen();
-        PrintHabitStatus();
+        ClearPreviousLines((invalidCheck? 3: 2));
 
         cout << "Invalid Command! Please follow the instructions.\n";
-        cout << "[1] - · [2] - · [q] Back to Menu\nInput command: ";
+        cout << "[1] Previous Month · [2] - · [q] Back to Menu\nInput command: ";
+        invalidCheck = 1;
         GetLine(cmd);
     }
 
     if(cmd == "1"){
-        
+        PersonalDashboard(PreviousMonth(current.y, current.m) + "-" + current.d);
     }else if(cmd == "2"){
         
     }else if(cmd == "q"){
