@@ -46,7 +46,7 @@ const string MONTH[] = {"January", "February", "March", "April", "May", "June", 
                             "August", "September","October", "November", "December"};
 const int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-// Gen AI
+// Gen AI code
 int paletteIdx = 0;
 vector<string> palette = {
         "\033[38;2;255;160;160m", // Soft Coral
@@ -73,6 +73,7 @@ void GetLine(T &input, bool clearBuffer = 0){
 }
 
 bool BinarySearchDate(string input_date){
+    if(!dates.size()) return false;
     int tar = DateToNum(input_date);
     int l = 0, r = dates.size() - 1;
     while(l < r){
@@ -99,7 +100,7 @@ void ClearScreen(){
     cout << "\033[2J\033[1;1H\n";
 }
 
-// Gen AI 
+// Gen AI code
 void ClearPreviousLines(int n) {
     for (int i = 0; i < n; ++i) {
         cout << "\033[A\33[2K\r" << flush;
@@ -242,9 +243,6 @@ void ReadData(){
             }
         }
     }
-
-    dates.push_back({CurrentDate(0), DateToNum(CurrentDate(0))});
-    progressBydate[CurrentDate(0)] = 0;
 }
 
 void PreviewData(){
@@ -263,12 +261,10 @@ void PrintMenu(bool valid){
     cout << "[2] Track The Day\n";
     cout << "[3] Manage My Habits\n";
     cout << "[4] Personal Dashboard\n";
-    cout << "[5] User Profile & RPG Stats\n";
-    cout << "[6] Data Laboratory\n";
-    cout << "[7] Save & Exit\n";
+    cout << "[5] Save & Exit\n";
     cout << "-----------------------------\n";
     if(!valid) cout << "Invalid command! Please follow the intructions.\n";
-    cout << "Input your command (1 - 7): ";
+    cout << "Input your command (1 - 5): ";
 }
 
 void PrintDateAndHabitStatus(string input_date=""){
@@ -279,7 +275,7 @@ void PrintDateAndHabitStatus(string input_date=""){
     cout << "\n✨ Habits Status ✨\n";
     for(int i = 0; i < habits.size(); i++){
         string tmp_date = (input_date==""?CurrentDate(0) : input_date);
-        cout << "[" << (tracking_data[habits[i]][tmp_date]? "/":" ") << "] " << i+1 << ". " << habits[i] << '\n'; 
+        cout << "[" << (tracking_data[habits[i]][tmp_date]? "/":" ") << "] " << " " << habits[i] << '\n'; 
         
     }
     
@@ -290,7 +286,7 @@ void PrintHabitStatus(){
     cout << "✨ Habits Status ✨\n";
 
     for(int i = 0; i < habits.size(); i++){
-        cout << "[" << (tracking_data[habits[i]][CurrentDate(0)]? "/":" ") << "] " << i+1 << ". " << habits[i] << '\n'; 
+        cout << "[" << (tracking_data[habits[i]][CurrentDate(0)]? "/":" ") << "] " << " " << habits[i] << '\n'; 
     }
 }
 
@@ -451,14 +447,13 @@ void CalculateStreak(Streak &streak){
         bestStreak.all = max(bestStreak.all, streak.all);
     }
 }
+
 /*
 1. Track Today
 2. Track The Day
 3. Manage My Habits
 4. Personal Dashboard
-5. User Profile & RPG Stats
-6. Data Laboratory
-7. Exit
+5. Exit
 */
 
 void Menu(){
@@ -486,10 +481,6 @@ void Menu(){
     }else if(cmd == "4"){
         PersonalDashboard();
     }else if(cmd == "5"){
-        
-    }else if(cmd == "6"){
-        
-    }else if(cmd == "7"){
         //Do nothing, lets atexit() saves date
     }
 }
@@ -562,13 +553,26 @@ void TrackTheDay(string fixed_date){
     string input_date;
 
     if(fixed_date == ""){
+        cout << "[q] Back to Menu\n";
         cout << "What's a date you want to track? (year-month-day, e.g. 2026-05-18) : ";
         cin >> input_date;
+        
+        if(input_date == "q"){
+            Menu();
+            return;
+        }
+        
         while(!IsValidDate(input_date)){
             ClearScreen();
+            cout << "[q] Back to Menu\n";
             cout << "Invalid Date! Please input valid date.\n";
             cout << "What's a date you want to track? (year-month-day, e.g. 2026-05-18) : ";
             cin >> input_date;
+
+            if(input_date == "q"){
+                Menu();
+                return;
+            }
         }
 
         input_date = DateFormatting(input_date);
@@ -592,7 +596,7 @@ void TrackTheDay(string fixed_date){
     }
 
     ClearScreen();
-    PrintDateAndHabitStatus(input_date);;
+    PrintDateAndHabitStatus(input_date);
 
     cout << "[1] Edit this day's status · [2] Track another day · [q] Back to Menu\nInput command: ";
     string cmd; 
@@ -697,10 +701,11 @@ void PersonalDashboard(string input_date){
     Streak streak;
     CalculateStreak(streak);
 
-    //Reset if not compete yet today
-    if(!BinarySearchDate(CurrentDate(0)) || !progressBydate[CurrentDate(0)]) {
-        streak.all = 0;
-        for(auto habit: habits) streak.habit[habit] = 0;
+    //Reset if missed yesterday
+    if(!progressBydate[CurrentDate(0)] && !progressBydate[Yesterday(CurrentDate(0))]) streak.all = 0;
+    for(auto habit:habits){
+        if(!tracking_data[habit][CurrentDate(0)] && !tracking_data[habit][Yesterday(CurrentDate(0))])
+            streak.habit[habit] = 0; 
     }
 
     int thisWeekAvg = WeeklyAvg();
@@ -709,7 +714,7 @@ void PersonalDashboard(string input_date){
     cout << left << setw(25) << "today's progress";
     cout << "weekly avg\n";
 
-    cout << "\033[38;2;255;165;0m" << "\033[48;2;44;44;41m" << left << setw(25) << to_string(streak.all) + " days";
+    cout << "\033[38;2;255;165;0m" << "\033[48;2;44;44;41m" << left << setw(25) << to_string(streak.all) + " day(s)";
     cout << "\033[38;2;29;158;117m" << left << setw(25) << to_string(progressBydate[CurrentDate(0)]) + "/" + to_string(habits.size());
     cout << "\033[38;2;175;183;255m"<< left << setw(18) << to_string(thisWeekAvg) + "%";
     cout << "\033[0m\n";
@@ -732,12 +737,12 @@ void PersonalDashboard(string input_date){
     for(auto habit : habits){
         cout << (tracking_data[habit][CurrentDate(0)] ? "\033[32m/" : "\033[31mX")  << "\033[0m " ; 
         cout << left << setw(50) << habit;
-        cout << (tracking_data[habit][CurrentDate(0)] ? "\033[32mdone" : "\033[31mmissed")  << "\033[0m" << '\n'; 
+        cout << (tracking_data[habit][CurrentDate(0)] ? "\033[32mdone" : "\033[31mmissed")  << "\033[0m"<< '\n'; 
     }   
     cout << "\n";
 
-    //--------------- Weekly Completion Rate ---------------
-    cout << "\033[48;2;53;59;70m" << "  WEEKLY COMPLETION RATE  \n" << "\033[0m";
+    //--------------- Weekly Completion ---------------
+    cout << "\033[48;2;53;59;70m" << "  WEEKLY COMPLETION  \n" << "\033[0m";
 
     paletteIdx = 0;
     for(auto habit : habits){
@@ -747,7 +752,8 @@ void PersonalDashboard(string input_date){
         int completionBar = ceil(float(completionRate) * barSize / 100);
         for(int i = 0; i < completionBar; i++) cout << palette[paletteIdx] << "■";
         for(int i = 0; i < barSize - completionBar; i++) cout << "\033[38;2;40;40;40m" << "■";
-        cout << " " << palette[paletteIdx] << completionRate << "%" << "\033[0m" << '\n';
+        cout << " " << palette[paletteIdx] << left << setw(4) << to_string(completionRate) + "%";
+        cout << "\033[0m" << " | " << streak.habit[habit] << "d streak" << '\n';
 
         paletteIdx++; paletteIdx %= palette.size();
     }
@@ -756,6 +762,27 @@ void PersonalDashboard(string input_date){
     //--------------- Heat Map ---------------
     cout << "\033[48;2;53;59;70m" << MONTH[stoi(current.m) - 1] << ", " << current.y << "\033[0m" << '\n';
     PrintCalendar(current.m, current.y);
+    cout << '\n';
+
+    //--------------- Best & Needs Work Habit ---------------
+    cout << "\033[48;2;53;59;70m" << "BEST HABIT";
+    cout << "\033[0m" << setw(30) << " ";
+    cout << "\033[48;2;53;59;70m" << "NEEDS WORK\n\033[0m";
+
+    string best, worst;
+    int mn = 1e9, mx = 0;
+    for(auto habit : habits){
+        if(WeeklyHabitAvg(habit) >= mx) mx = WeeklyHabitAvg(habit), best = habit;
+        if(WeeklyHabitAvg(habit) <= mn) mn = WeeklyHabitAvg(habit), worst = habit;
+    }
+
+    cout << "\033[38;2;66;143;255m" << left << setw(40) << best << "\033[0m";
+    cout << "\033[38;2;255;66;66m" << worst << "\033[0m\n";
+
+    cout << left << setw(41) << to_string(WeeklyHabitAvg(best)) + "% this week · " + to_string(streak.habit[best]) + "d streak"; 
+    cout << to_string(WeeklyHabitAvg(worst)) + "% this week · " + to_string(streak.habit[worst]) + "d streak"; 
+    cout << '\n';
+    //-------------------------------------------------------
 
     cout << "\n--------------------------------------------------------------------\n";
     if(input_date == CurrentDate(0))
@@ -794,11 +821,11 @@ int main(){
 
     //PreviewData();
 
-    //Menu();
+    Menu();
 
     //TrackToday();
     //ManageMyHabits();
-    PersonalDashboard();
+    //PersonalDashboard();
 
     //atexit(SaveDate);
     return 0;
