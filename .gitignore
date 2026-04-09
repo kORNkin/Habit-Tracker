@@ -1,5 +1,10 @@
 *
 !*.*
 !*/
+
 test.cpp
 code.dSYM
+
+.*
+
+!.gitignore
