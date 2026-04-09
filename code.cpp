@@ -138,6 +138,15 @@ string DateFormatting(string input_date){
     return tmp_date.y + "-" + (stoi(tmp_date.m) < 10? "0" + tmp_date.m : tmp_date.m) + "-" + (stoi(tmp_date.d) < 10? "0" + tmp_date.d : tmp_date.d); 
 }
 
+string EmojiStreak(int streak){
+    if(streak <= 5)       return "";
+    else if(streak <= 10) return "✨";
+    else if(streak <= 20) return "⚡️";
+    else if(streak <= 40) return "🎉";
+    else if(streak <= 80) return "🔥";
+    else                  return "🏆";
+}
+
 bool IsValidCmd(string cmd, int end){
     if(pow(10, cmd.size() - 1) > end || !cmd.size()) return false;
     if(cmd == "q") return true;
@@ -408,6 +417,7 @@ void CalculateStreak(Streak &streak){
         streak.habit[habits[i]] = 1;
 
         for(int j = 1; j < dates.size(); j++){
+            if(dates[j].second > DateToNum(CurrentDate(0))) break;
             if(IsValidStreak(dates[j-1].first, dates[j].first) && tracking_data[habits[i]][dates[j - 1].first] && tracking_data[habits[i]][dates[j].first])
                 streak.habit[habits[i]]++; 
             else streak.habit[habits[i]] = 1;
@@ -664,13 +674,19 @@ void PersonalDashboard(string input_date){
     Streak streak;
     CalculateStreak(streak);
 
+    //Reset if not compete yet today
+    if(!BinarySearchDate(CurrentDate(0)) || !progressBydate[CurrentDate(0)]) {
+        streak.all = 0;
+        for(auto habit: habits) streak.habit[habit] = 0;
+    }
+
     int thisWeekAvg = WeeklyAVG();
 
     cout << left << setw(25) << "streak";
     cout << left << setw(25) << "today's progress";
     cout << "weekly avg\n";
 
-    cout << "\033[38;2;181;118;20m" << "\033[48;2;44;44;41m"<< left << setw(27) << to_string(streak.all) + " days 🔥";
+    cout << "\033[38;2;255;165;0m" << "\033[48;2;44;44;41m"<< left << setw(27) << to_string(streak.all) + " days " + EmojiStreak(streak.all);
     cout << "\033[38;2;29;158;117m" << left << setw(25) << to_string(progressBydate[CurrentDate(0)]) + "/" + to_string(habits.size());
     cout << "\033[38;2;131;139;215m"<< left << setw(18) << to_string(thisWeekAvg) + "%";
     cout << "\033[0m\n";
@@ -693,7 +709,9 @@ void PersonalDashboard(string input_date){
     PrintCalendar(current.m, current.y);
 
     cout << "\n--------------------------------------------------------------------\n";
-    cout << "[1] Previous Month · [2] - · [q] Back to Menu\nInput command: ";
+    if(input_date == CurrentDate(0))
+        cout << "[1] Previous Month · [q] Back to Menu\nInput command: ";
+    else cout << "[1] Previous Month · [2] This Month · [q] Back to Menu\nInput command: ";
     string cmd;
     GetLine(cmd);   
 
@@ -702,15 +720,17 @@ void PersonalDashboard(string input_date){
         ClearPreviousLines((invalidCheck? 3: 2));
 
         cout << "Invalid Command! Please follow the instructions.\n";
-        cout << "[1] Previous Month · [2] - · [q] Back to Menu\nInput command: ";
+        if(input_date == CurrentDate(0))
+            cout << "[1] Previous Month · [q] Back to Menu\nInput command: ";
+        else cout << "[1] Previous Month · [2] This Month · [q] Back to Menu\nInput command: ";
         invalidCheck = 1;
         GetLine(cmd);
     }
 
     if(cmd == "1"){
         PersonalDashboard(PreviousMonth(current.y, current.m) + "-" + current.d);
-    }else if(cmd == "2"){
-        
+    }else if(cmd == "2" && input_date != CurrentDate(0)){
+        PersonalDashboard();
     }else if(cmd == "q"){
         Menu();
     }
