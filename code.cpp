@@ -46,6 +46,22 @@ const string MONTH[] = {"January", "February", "March", "April", "May", "June", 
                             "August", "September","October", "November", "December"};
 const int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+// Gen AI
+int paletteIdx = 0;
+vector<string> palette = {
+        "\033[38;2;255;160;160m", // Soft Coral
+        "\033[38;2;255;210;170m", // Peach
+        "\033[38;2;255;255;190m", // Lemon
+        "\033[38;2;180;255;210m", // Mint
+        "\033[38;2;180;255;255m", // Aqua
+        "\033[38;2;180;210;255m", // Sky
+        "\033[38;2;210;190;255m", // Lavender
+        "\033[38;2;255;190;230m", // Pink
+        "\033[38;2;220;255;180m", // Lime
+        "\033[38;2;220;225;235m"  // Silver
+    };
+// ----------
+
 //Track Today: 0-Tracked, 1-Edit Track, 2-Check Remaining 
 int statusTrackToday = 1;
 
@@ -315,7 +331,7 @@ string Yesterday(string input_date){
     }
 }
 
-int WeeklyAVG(string input_date = ""){
+int WeeklyAvg(string input_date = ""){
     float sum = 0;
 
     string now_date = (input_date == "" ? CurrentDate(0): input_date);
@@ -325,6 +341,18 @@ int WeeklyAVG(string input_date = ""){
     }
     sum += progressBydate[now_date];
     return int(sum / (7 * habits.size()) * 100);
+}
+
+int WeeklyHabitAvg(string input_habit, string input_date = ""){
+    float sum = 0;
+
+    string now_date = (input_date == "" ? CurrentDate(0): input_date);
+    while(getDayOfWeek(DateToStruct(now_date)) != 1){
+        sum += tracking_data[input_habit][now_date];
+        now_date = Yesterday(now_date);
+    }
+    sum += tracking_data[input_habit][now_date];
+    return int(sum / 7 * 100);
 }
 
 // GenAI code
@@ -660,11 +688,12 @@ void ManageMyHabits(){
 
 void PersonalDashboard(string input_date){
     ClearScreen();
+    ClearPreviousLines(1);
 
     if(input_date == "") input_date = CurrentDate(0);
     Date current = DateToStruct(DateFormatting(input_date)); 
 
-    //----- Streak Stat -----
+    //--------------- Streak Stat ---------------
     Streak streak;
     CalculateStreak(streak);
 
@@ -674,7 +703,7 @@ void PersonalDashboard(string input_date){
         for(auto habit: habits) streak.habit[habit] = 0;
     }
 
-    int thisWeekAvg = WeeklyAVG();
+    int thisWeekAvg = WeeklyAvg();
 
     cout << left << setw(25) << "streak";
     cout << left << setw(25) << "today's progress";
@@ -693,22 +722,39 @@ void PersonalDashboard(string input_date){
         lastWeek = Yesterday(lastWeek);
         if(getDayOfWeek(DateToStruct(lastWeek)) == 0) break;
     }
-    int compareLastWeek = thisWeekAvg - WeeklyAVG(lastWeek);
+    int compareLastWeek = thisWeekAvg - WeeklyAvg(lastWeek);
     cout << left << setw(10) << (compareLastWeek >= 0? "↑ " : "↓ ") + to_string(abs(compareLastWeek)) + "% vs last week";
 
-    cout << "\n\n\n";
+    cout << "\n\n";
 
-    //----- Habit Status -----
-    cout << "\033[48;2;44;44;41m" << "TODAY\'S HABITS\n" << "\033[0m";
+    //--------------- Habit Status ---------------
+    cout << "\033[48;2;53;59;70m" << "  TODAY\'S HABITS  \n" << "\033[0m";
     for(auto habit : habits){
         cout << (tracking_data[habit][CurrentDate(0)] ? "\033[32m/" : "\033[31mX")  << "\033[0m " ; 
         cout << left << setw(50) << habit;
         cout << (tracking_data[habit][CurrentDate(0)] ? "\033[32mdone" : "\033[31mmissed")  << "\033[0m" << '\n'; 
     }   
-    cout << "\n\n";
+    cout << "\n";
 
-    //----- Heat Map -----
-    cout << MONTH[stoi(current.m) - 1] << ", " << current.y << '\n';
+    //--------------- Weekly Completion Rate ---------------
+    cout << "\033[48;2;53;59;70m" << "  WEEKLY COMPLETION RATE  \n" << "\033[0m";
+
+    paletteIdx = 0;
+    for(auto habit : habits){
+        cout << setw(30) << habit;
+        int completionRate = WeeklyHabitAvg(habit);
+        const int barSize = 21; 
+        int completionBar = ceil(float(completionRate) * barSize / 100);
+        for(int i = 0; i < completionBar; i++) cout << palette[paletteIdx] << "■";
+        for(int i = 0; i < barSize - completionBar; i++) cout << "\033[38;2;40;40;40m" << "■";
+        cout << " " << palette[paletteIdx] << completionRate << "%" << "\033[0m" << '\n';
+
+        paletteIdx++; paletteIdx %= palette.size();
+    }
+    cout << "\n";
+
+    //--------------- Heat Map ---------------
+    cout << "\033[48;2;53;59;70m" << MONTH[stoi(current.m) - 1] << ", " << current.y << "\033[0m" << '\n';
     PrintCalendar(current.m, current.y);
 
     cout << "\n--------------------------------------------------------------------\n";
