@@ -5,6 +5,5 @@
 test.cpp
 code.dSYM
 
-.*
-
-!.gitignore
+.DS_Store
+**/.DS_Store
