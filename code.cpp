@@ -138,15 +138,6 @@ string DateFormatting(string input_date){
     return tmp_date.y + "-" + (stoi(tmp_date.m) < 10? "0" + tmp_date.m : tmp_date.m) + "-" + (stoi(tmp_date.d) < 10? "0" + tmp_date.d : tmp_date.d); 
 }
 
-string EmojiStreak(int streak){
-    if(streak <= 5)       return "";
-    else if(streak <= 10) return "✨";
-    else if(streak <= 20) return "⚡️";
-    else if(streak <= 40) return "🎉";
-    else if(streak <= 80) return "🔥";
-    else                  return "🏆";
-}
-
 bool IsValidCmd(string cmd, int end){
     if(pow(10, cmd.size() - 1) > end || !cmd.size()) return false;
     if(cmd == "q") return true;
@@ -285,8 +276,6 @@ void PrintHabitStatus(){
     for(int i = 0; i < habits.size(); i++){
         cout << "[" << (tracking_data[habits[i]][CurrentDate(0)]? "/":" ") << "] " << i+1 << ". " << habits[i] << '\n'; 
     }
-    
-    cout << "\n--------------------------------------------------\n";
 }
 
 string PreviousMonth(string y, string m){
@@ -603,6 +592,7 @@ void TrackTheDay(string fixed_date){
 void ManageMyHabits(){
     ClearScreen();
     PrintHabitStatus();
+    cout << "\n--------------------------------------------------\n";
 
     cout << "[1] Add new habit · [2] Remove a habit · [q] Back to Menu\nInput command: ";
     string cmd;
@@ -611,6 +601,7 @@ void ManageMyHabits(){
     while(!IsValidCmd(cmd, 3)){
         ClearScreen();
         PrintHabitStatus();
+        cout << "\n--------------------------------------------------\n";
 
         cout << "Invalid Command! Please follow the instructions.\n";
         cout << "[1] Add new habit · [2] Remove a habit · [q] Back to Menu\nInput command: ";
@@ -620,6 +611,7 @@ void ManageMyHabits(){
     if(cmd == "1"){
         ClearScreen();
         PrintHabitStatus();
+        cout << "\n--------------------------------------------------\n";
 
         cout << "What's your new habit? : ";
 
@@ -637,12 +629,14 @@ void ManageMyHabits(){
     }else if(cmd == "2"){
         ClearScreen();
         PrintHabitStatus();
+        cout << "\n--------------------------------------------------\n";
 
         cout << "Habit you want to remove (1 - " << habits.size() << ") : ";
         GetLine(cmd);
         while(!IsValidCmd(cmd, habits.size())) { 
             ClearScreen();
             PrintHabitStatus();
+            cout << "\n--------------------------------------------------\n";
 
             cout << "Invalid order! Please input existing habit.\n";
             cout << "Habit you want to remove (1 - " << habits.size() << ") : ";
@@ -670,7 +664,7 @@ void PersonalDashboard(string input_date){
     if(input_date == "") input_date = CurrentDate(0);
     Date current = DateToStruct(DateFormatting(input_date)); 
 
-    //Streak Stat
+    //----- Streak Stat -----
     Streak streak;
     CalculateStreak(streak);
 
@@ -686,9 +680,9 @@ void PersonalDashboard(string input_date){
     cout << left << setw(25) << "today's progress";
     cout << "weekly avg\n";
 
-    cout << "\033[38;2;255;165;0m" << "\033[48;2;44;44;41m"<< left << setw(27) << to_string(streak.all) + " days " + EmojiStreak(streak.all);
+    cout << "\033[38;2;255;165;0m" << "\033[48;2;44;44;41m" << left << setw(25) << to_string(streak.all) + " days";
     cout << "\033[38;2;29;158;117m" << left << setw(25) << to_string(progressBydate[CurrentDate(0)]) + "/" + to_string(habits.size());
-    cout << "\033[38;2;131;139;215m"<< left << setw(18) << to_string(thisWeekAvg) + "%";
+    cout << "\033[38;2;175;183;255m"<< left << setw(18) << to_string(thisWeekAvg) + "%";
     cout << "\033[0m\n";
 
     cout << left << setw(25) << "personal best: " + to_string(bestStreak.all);
@@ -704,7 +698,16 @@ void PersonalDashboard(string input_date){
 
     cout << "\n\n\n";
 
-    //Heat Map
+    //----- Habit Status -----
+    cout << "\033[48;2;44;44;41m" << "TODAY\'S HABITS\n" << "\033[0m";
+    for(auto habit : habits){
+        cout << (tracking_data[habit][CurrentDate(0)] ? "\033[32m/" : "\033[31mX")  << "\033[0m " ; 
+        cout << left << setw(50) << habit;
+        cout << (tracking_data[habit][CurrentDate(0)] ? "\033[32mdone" : "\033[31mmissed")  << "\033[0m" << '\n'; 
+    }   
+    cout << "\n\n";
+
+    //----- Heat Map -----
     cout << MONTH[stoi(current.m) - 1] << ", " << current.y << '\n';
     PrintCalendar(current.m, current.y);
 
