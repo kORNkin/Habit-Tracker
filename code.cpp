@@ -155,6 +155,12 @@ string DateFormatting(string input_date){
     return tmp_date.y + "-" + (stoi(tmp_date.m) < 10? "0" + tmp_date.m : tmp_date.m) + "-" + (stoi(tmp_date.d) < 10? "0" + tmp_date.d : tmp_date.d); 
 }
 
+void DateSort(){
+    sort(dates.begin(), dates.end(), [](const auto& a, const auto& b) {
+        return a.second < b.second;
+    });
+}
+
 bool IsValidCmd(string cmd, int end){
     if(pow(10, cmd.size() - 1) > end || !cmd.size()) return false;
     if(cmd == "q") return true;
@@ -175,6 +181,9 @@ bool IsValidDate(string input_date){
     if(tmp_date.y.size() != 4 || stoi(tmp_date.y) < 1000) return false;
     if(!tmp_date.m.size() || stoi(tmp_date.m) < 1 || stoi(tmp_date.m) > 12) return false;
     if(!tmp_date.d.size() || stoi(tmp_date.d) < 1 || stoi(tmp_date.d) > 31) return false;
+
+    if(DateToNum(input_date) > DateToNum(CurrentDate(0))) return false;
+
     return true;
 }
 
@@ -287,7 +296,7 @@ void PrintHabitStatus(){
     cout << "✨ Habits Status ✨\n";
 
     for(int i = 0; i < habits.size(); i++){
-        cout << "[" << (tracking_data[habits[i]][CurrentDate(0)]? "/":" ") << "] " << " " << habits[i] << '\n'; 
+        cout << "[" << (tracking_data[habits[i]][CurrentDate(0)]? "/":" ") << "] " << " " << i + 1 << ". " << habits[i] << '\n'; 
     }
 }
 
@@ -423,9 +432,7 @@ void PrintCalendar(string month, string year){
 void CalculateStreak(Streak &streak){
     streak.all = 1;
 
-    sort(dates.begin(), dates.end(), [](const auto& a, const auto& b) {
-        return a.second < b.second;
-    });
+    DateSort();
 
     for(int i = 0; i < habits.size(); i++) {
         streak.habit[habits[i]] = 1;
@@ -578,7 +585,11 @@ void TrackTheDay(string fixed_date){
 
         input_date = DateFormatting(input_date);
         
-        if(!BinarySearchDate(input_date)) dates.push_back({input_date, DateToNum(input_date)}), progressBydate[input_date] = 0;
+        if(!BinarySearchDate(input_date)) {
+            dates.push_back({input_date, DateToNum(input_date)});
+            DateSort();
+            progressBydate[input_date] = 0;
+        }
 
     } else input_date = fixed_date;
 
@@ -840,12 +851,12 @@ int main(){
 
     //PreviewData();
 
+    atexit(SaveData);
     Menu();
 
     //TrackToday();
     //ManageMyHabits();
     //PersonalDashboard();
 
-    atexit(SaveData);
     return 0;
 }
