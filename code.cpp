@@ -662,6 +662,8 @@ void ManageMyHabits(){
         
         ManageMyHabits();
     }
+    
+    SaveData();
 }
 
 void PersonalDashboard(string input_date){
