@@ -9,7 +9,6 @@
 #include <iomanip>
 #include <unordered_map>
 #include <algorithm>
-#include <cstdlib>
 
 using namespace std;
 
@@ -138,7 +137,7 @@ int DateToNum(string input_date){
             tmp += input_date[idx];
             idx++;
         } 
-        sum += stoi(tmp) * (idx == 4? 365 : (idx == 7? 31 : 1));
+        sum += stoi(tmp) * (idx == 4? 366 : (idx == 7? 31 : 1));
         idx++;
     }
 
@@ -464,35 +463,6 @@ void CalculateStreak(Streak &streak){
 5. Exit
 */
 
-void Menu(){
-    ClearScreen();
-
-    PrintMenu(1);
-
-    string cmd;
-    GetLine(cmd);
-
-    while(!IsValidCmd(cmd, 7)){
-        ClearScreen();
-        PrintMenu(0);
-        GetLine(cmd);
-    }
-
-    ClearScreen();
-
-    if(cmd == "1"){
-        TrackToday();
-    }else if(cmd == "2"){
-        TrackTheDay();
-    }else if(cmd == "3"){
-        ManageMyHabits();
-    }else if(cmd == "4"){
-        PersonalDashboard();
-    }else if(cmd == "5"){
-        //Do nothing, lets atexit() saves date
-    }
-}
-
 void TrackToday(){
 
     ClearScreen();
@@ -550,9 +520,9 @@ void TrackToday(){
     }else if(cmd == "2") { //Check the remaining
         statusTrackToday = 2;
         TrackToday();  
-    }else if(cmd == "q"){
-        Menu();
     }
+
+    SaveData();
 }
 
 void TrackTheDay(string fixed_date){
@@ -565,10 +535,8 @@ void TrackTheDay(string fixed_date){
         cout << "What's a date you want to track? (year-month-day, e.g. 2026-05-18) : ";
         cin >> input_date;
         
-        if(input_date == "q"){
-            Menu();
-            return;
-        }
+        if(input_date == "q") return;
+        
         
         while(!IsValidDate(input_date)){
             ClearScreen();
@@ -577,10 +545,7 @@ void TrackTheDay(string fixed_date){
             cout << "What's a date you want to track? (year-month-day, e.g. 2026-05-18) : ";
             cin >> input_date;
 
-            if(input_date == "q"){
-                Menu();
-                return;
-            }
+            if(input_date == "q") return;
         }
 
         input_date = DateFormatting(input_date);
@@ -628,9 +593,9 @@ void TrackTheDay(string fixed_date){
         TrackTheDay(input_date);
     }else if(cmd == "2"){
         TrackTheDay();
-    }else if(cmd == "q"){
-        Menu();
     }
+
+    SaveData();
 }
 
 void ManageMyHabits(){
@@ -696,10 +661,7 @@ void ManageMyHabits(){
         }
         
         ManageMyHabits();
-    }else if(cmd == "q"){
-        Menu();
     }
-
 }
 
 void PersonalDashboard(string input_date){
@@ -779,8 +741,9 @@ void PersonalDashboard(string input_date){
     string best, worst;
     int mn = 1e9, mx = 0;
     for(auto habit : habits){
-        if(WeeklyHabitAvg(habit) >= mx) mx = WeeklyHabitAvg(habit), best = habit;
-        if(WeeklyHabitAvg(habit) <= mn) mn = WeeklyHabitAvg(habit), worst = habit;
+        int habitAvg = WeeklyHabitAvg(habit);
+        if(habitAvg >= mx) mx = habitAvg, best = habit;
+        if(habitAvg <= mn) mn = habitAvg, worst = habit;
     }
 
     cout << "\033[38;2;66;143;255m" << left << setw(40) << best << "\033[0m";
@@ -819,12 +782,12 @@ void PersonalDashboard(string input_date){
         PersonalDashboard(PreviousMonth(current.y, current.m) + "-" + current.d);
     }else if(cmd == "2" && input_date != CurrentDate(0)){
         PersonalDashboard();
-    }else if(cmd == "q"){
-        Menu();
     }
 }
 
 void SaveData(){
+    if(habits.empty()) return;
+    
     file.open("habits.csv", ios::out);
 
     file << "date,";
@@ -851,8 +814,35 @@ int main(){
 
     //PreviewData();
 
-    atexit(SaveData);
-    Menu();
+    //Menu
+    while(1){
+        ClearScreen();
+        
+        PrintMenu(1);
+        
+        string cmd;
+        GetLine(cmd);
+        
+        while(!IsValidCmd(cmd, 7)){
+            ClearScreen();
+            PrintMenu(0);
+            GetLine(cmd);
+        }
+        
+        ClearScreen();
+        
+        if(cmd == "1"){
+            TrackToday();
+        }else if(cmd == "2"){
+            TrackTheDay();
+        }else if(cmd == "3"){
+            ManageMyHabits();
+        }else if(cmd == "4"){
+            PersonalDashboard();
+        }else if(cmd == "5"){
+            break;
+        }
+    }
 
     //TrackToday();
     //ManageMyHabits();
