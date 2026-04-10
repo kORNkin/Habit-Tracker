@@ -1,9 +1,8 @@
 #include "globals.h"
 #include "date.h"
 #include "screen.h"
+#include "fileManagement.h"
 
-#include <fstream>
-#include <sstream>
 #include <cstdlib>
 #include <cmath>
 #include <algorithm>
@@ -51,20 +50,6 @@ vector<string> palette = {
 //Track Today: 0-Tracked, 1-Edit Track, 2-Check Remaining 
 int statusTrackToday = 1;
 
-bool IsValidCmd(string cmd, int end){
-    if(pow(10, cmd.size() - 1) > end || !cmd.size()) return false;
-    if(cmd == "q") return true;
-    for(auto c : cmd) if(c - '0' < 0 || c - '0' > 9) return false;
-    if(stoi(cmd) > end || stoi(cmd) < 1) return false;
-
-    return true;
-}
-
-bool IsValidFile(const string &file_name){
-    file.open(file_name, ios::in);
-    return file.good();
-}
-
 bool IsValidStreak(string first_date, string second_date){
     Date prev_date = DateToStruct(first_date);
     Date now_date = DateToStruct(second_date);
@@ -86,46 +71,6 @@ bool IsValidStreak(string first_date, string second_date){
         return true;
 
     return false;
-}
-
-void ReadData(){
-    if(IsValidFile("habits.csv")){
-        file.close();
-        file.open("habits.csv", ios::in);
-
-        string line;
-
-        // first line
-        getline(file, line);
-        stringstream ss(line);
-
-        string data;
-        // date
-        getline(ss, data, ',');
-        // habits name
-        while(getline(ss, data, ',')){
-            habits.push_back(data);
-        }
-
-        while(getline(file, line)){
-            stringstream ss(line);
-            // date
-            getline(ss, data, ',');
-            string current_line_date = data;
-            dates.push_back({current_line_date, DateToNum(current_line_date)});
-
-            progressBydate[current_line_date] = 0;
-
-            int idx = 0;
-            // habits data
-            while(getline(ss, data, ',')){
-                tracking_data[habits[idx]][current_line_date] = (data == "1"? 1:0);
-                if(data == "1") progressBydate[current_line_date]++;
-                idx++;
-            }
-        }
-        file.close();
-    }
 }
 
 int WeeklyAvg(string input_date = ""){
@@ -507,30 +452,6 @@ void PersonalDashboard(string input_date){
     }else if(cmd == "2" && input_date != CurrentDate(0)){
         PersonalDashboard();
     }
-}
-
-void SaveData(){
-    if(habits.empty()) return;
-    
-    file.open("habits.csv", ios::out);
-
-    file << "date,";
-    for(int i = 0; i < habits.size() - 1; i++) file << habits[i] << ",";
-    file << habits.back() << '\n';
-
-    sort(dates.begin(), dates.end(), [](const auto& a, const auto& b) {
-        return a.second < b.second;
-    });
-    for(int i = 0; i < dates.size(); i++){
-        file << dates[i].first << ",";
-
-        for(int j = 0; j < habits.size() - 1; j++) file << tracking_data[habits[j]][dates[i].first] << ",";
-        file << tracking_data[habits.back()][dates[i].first];
-
-        if(i < dates.size() - 1) file << '\n';
-    }
-
-    file.close();
 }
 
 int main(){

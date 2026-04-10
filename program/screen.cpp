@@ -13,6 +13,15 @@ void ClearPreviousLines(int n) {
 }
 // ----------
 
+bool IsValidCmd(string cmd, int end){
+    if(pow(10, cmd.size() - 1) > end || !cmd.size()) return false;
+    if(cmd == "q") return true;
+    for(auto c : cmd) if(c - '0' < 0 || c - '0' > 9) return false;
+    if(stoi(cmd) > end || stoi(cmd) < 1) return false;
+
+    return true;
+}
+
 string HeatColor(int completed, int total) {
     float ratio = (total == 0) ? 0 : (float)completed / total;
 

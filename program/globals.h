@@ -16,6 +16,8 @@ struct Streak{
     unordered_map<string, int> habit;
 };
 
+extern fstream file;
+
 extern vector<string> habits;
 extern vector<pair<string, int>> dates;
 

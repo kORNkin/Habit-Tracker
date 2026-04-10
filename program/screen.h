@@ -14,6 +14,7 @@ void GetLine(T &input, bool clearBuffer = 0){
 
 void ClearScreen();
 void ClearPreviousLines(int n);
+bool IsValidCmd(string cmd, int end);
 string HeatColor(int completed, int total);
 void PrintMenu(bool valid);
 void PrintDateAndHabitStatus(string input_date="");
