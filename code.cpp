@@ -242,6 +242,7 @@ void ReadData(){
                 idx++;
             }
         }
+        file.close();
     }
 }
 
@@ -759,11 +760,6 @@ void PersonalDashboard(string input_date){
     }
     cout << "\n";
 
-    //--------------- Heat Map ---------------
-    cout << "\033[48;2;53;59;70m" << MONTH[stoi(current.m) - 1] << ", " << current.y << "\033[0m" << '\n';
-    PrintCalendar(current.m, current.y);
-    cout << '\n';
-
     //--------------- Best & Needs Work Habit ---------------
     cout << "\033[48;2;53;59;70m" << "BEST HABIT";
     cout << "\033[0m" << setw(30) << " ";
@@ -781,7 +777,12 @@ void PersonalDashboard(string input_date){
 
     cout << left << setw(41) << to_string(WeeklyHabitAvg(best)) + "% this week · " + to_string(streak.habit[best]) + "d streak"; 
     cout << to_string(WeeklyHabitAvg(worst)) + "% this week · " + to_string(streak.habit[worst]) + "d streak"; 
-    cout << '\n';
+    cout << "\n\n";
+
+    //--------------- Heat Map ---------------
+    cout << "\033[48;2;53;59;70m" << MONTH[stoi(current.m) - 1] << ", " << current.y << "\033[0m" << '\n';
+    PrintCalendar(current.m, current.y);
+
     //-------------------------------------------------------
 
     cout << "\n--------------------------------------------------------------------\n";
@@ -813,7 +814,25 @@ void PersonalDashboard(string input_date){
 }
 
 void SaveData(){
+    file.open("habit.csv", ios::out);
 
+    file << "date,";
+    for(int i = 0; i < habits.size() - 1; i++) file << habits[i] << ",";
+    file << habits.back() << '\n';
+
+    sort(dates.begin(), dates.end(), [](const auto& a, const auto& b) {
+        return a.second < b.second;
+    });
+    for(int i = 0; i < dates.size(); i++){
+        file << dates[i].first << ",";
+
+        for(int j = 0; j < habits.size() - 1; j++) file << tracking_data[habits[j]][dates[i].first] << ",";
+        file << tracking_data[habits.back()][dates[i].first];
+
+        if(i < dates.size() - 1) file << '\n';
+    }
+
+    file.close();
 }
 
 int main(){
@@ -827,6 +846,6 @@ int main(){
     //ManageMyHabits();
     //PersonalDashboard();
 
-    //atexit(SaveDate);
+    atexit(SaveData);
     return 0;
 }
