@@ -814,7 +814,7 @@ void PersonalDashboard(string input_date){
 }
 
 void SaveData(){
-    file.open("habit.csv", ios::out);
+    file.open("habits.csv", ios::out);
 
     file << "date,";
     for(int i = 0; i < habits.size() - 1; i++) file << habits[i] << ",";
