@@ -48,9 +48,9 @@ void ReadData(){
 
 
 void SaveData(){
-    if(habits.empty()) return;
-    
     file.open("habits.csv", ios::out);
+    
+    if(habits.empty()) return;
 
     file << "date,";
     for(int i = 0; i < habits.size() - 1; i++) file << habits[i] << ",";

@@ -642,7 +642,7 @@ void ManageMyHabits(){
 
         cout << "Habit you want to remove (1 - " << habits.size() << ") : ";
         GetLine(cmd);
-        while(!IsValidCmd(cmd, habits.size())) { 
+        while(cmd == "q" || !IsValidCmd(cmd, habits.size()) ) { 
             ClearScreen();
             PrintHabitStatus();
             cout << "\n--------------------------------------------------\n";
@@ -788,10 +788,10 @@ void PersonalDashboard(string input_date){
 }
 
 void SaveData(){
+    file.open("habits.csv", ios::out);
+    
     if(habits.empty()) return;
     
-    file.open("habits.csv", ios::out);
-
     file << "date,";
     for(int i = 0; i < habits.size() - 1; i++) file << habits[i] << ",";
     file << habits.back() << '\n';
@@ -825,7 +825,7 @@ int main(){
         string cmd;
         GetLine(cmd);
         
-        while(!IsValidCmd(cmd, 7)){
+        while(!IsValidCmd(cmd, 5)){
             ClearScreen();
             PrintMenu(0);
             GetLine(cmd);

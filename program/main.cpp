@@ -311,7 +311,7 @@ void ManageMyHabits(){
 
         cout << "Habit you want to remove (1 - " << habits.size() << ") : ";
         GetLine(cmd);
-        while(!IsValidCmd(cmd, habits.size())) { 
+        while(cmd == "q" || !IsValidCmd(cmd, habits.size())) { 
             ClearScreen();
             PrintHabitStatus();
             cout << "\n--------------------------------------------------\n";
@@ -470,7 +470,7 @@ int main(){
         string cmd;
         GetLine(cmd);
         
-        while(!IsValidCmd(cmd, 7)){
+        while(!IsValidCmd(cmd, 5)){
             ClearScreen();
             PrintMenu(0);
             GetLine(cmd);
