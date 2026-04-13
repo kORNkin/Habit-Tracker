@@ -1,3 +1,13 @@
+#ifdef _WIN32
+    #include <windows.h>
+    // Enable ANSI escape codes for Windows 10/11
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+#endif
+
 #include "globals.h"
 #include "date.h"
 #include "screen.h"
