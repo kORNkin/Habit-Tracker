@@ -24,10 +24,6 @@
 #include "screen.h"
 #include "fileManagement.h"
 
-#include <cstdlib>
-#include <cmath>
-#include <algorithm>
-
 using namespace std;
 
 void TrackToday();

@@ -4,6 +4,10 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <cstdlib>
+#include <cmath>
+#include <math.h>
+#include <algorithm>
 
 using namespace std;
 
