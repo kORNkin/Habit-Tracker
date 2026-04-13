@@ -438,7 +438,7 @@ void PersonalDashboard(string input_date){
     GetLine(cmd);   
 
     bool invalidCheck = 0;
-    while(!IsValidCmd(cmd, 3)){
+    while(!IsValidCmd(cmd, (input_date == CurrentDate(0)? 1: 2))){
         ClearPreviousLines((invalidCheck? 3: 2));
 
         cout << "Invalid Command! Please follow the instructions.\n";
