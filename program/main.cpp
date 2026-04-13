@@ -1,22 +1,5 @@
 #ifdef _WIN32
     #include <windows.h>
-
-    void EnableANSI() {
-        // Get the handle to the standard output
-        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (hOut == INVALID_HANDLE_HANDLE) return;
-
-        DWORD dwMode = 0;
-        if (!GetConsoleMode(hOut, &dwMode)) return;
-
-        // 0x0004 is the hex code for ENABLE_VIRTUAL_TERMINAL_PROCESSING
-        dwMode |= 0x0004; 
-        
-        if (!SetConsoleMode(hOut, dwMode)) {
-            // If this fails, Windows version might be too old for ANSI
-            std::cout << "Failed to enable ANSI colors." << std::endl;
-        }
-    }
 #endif
 
 #include "globals.h"
@@ -475,7 +458,7 @@ void PersonalDashboard(string input_date){
 
 int main(){
     #ifdef _WIN32
-        EnableANSI();
+        SetConsoleOutputCP(65001);
     #endif
 
     ReadData();
