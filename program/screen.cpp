@@ -38,7 +38,7 @@ void PrintMenu(bool valid){
     cout << "[2] Track The Day\n";
     cout << "[3] Manage My Habits\n";
     cout << "[4] Personal Dashboard\n";
-    cout << "[5] Save & Exit\n";
+    cout << "[5] Exit\n";
     cout << "-----------------------------\n";
     if(!valid) cout << "Invalid command! Please follow the intructions.\n";
     cout << "Input your command (1 - 5): ";
