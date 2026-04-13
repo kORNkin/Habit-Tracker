@@ -146,6 +146,8 @@ void TrackToday(){
     if(statusTrackToday){
         cout << "[!] Entry Mode: Type 'y' for Success, 'n' for Miss.\n\n";
         
+        if(statusTrackToday == 1) progressBydate[now_date] = 0;
+        
         for(int i = 0; i < habits.size(); i++){
             if(statusTrackToday == 2 && tracking_data[habits[i]][now_date]) continue;
 
@@ -231,6 +233,8 @@ void TrackTheDay(string fixed_date){
     PrintDateAndHabitStatus(input_date);
 
     cout << "[!] Entry Mode: Type 'y' for Success, 'n' for Miss.\n\n";
+
+    progressBydate[input_date] = 0;
         
     for(int i = 0; i < habits.size(); i++){
         cout << "> [" << i+1 << "/" << habits.size() << "] Did you complete " << habits[i] << " ?: ";
