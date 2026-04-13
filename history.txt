@@ -1,0 +1,149 @@
+commit 9f383973065cdf85e7363dd4fd2bfd1df3f0c2e3
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Mon Apr 13 18:28:13 2026 +0800
+
+    Update menu display
+
+commit fa709644ff7cbea86147c4884fd44b4042dd5159
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Mon Apr 13 15:20:27 2026 +0800
+
+    Fix display for Windows 10
+
+commit ad3d1bacec21b9b9c7ca5705ee185503dfba614e
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Mon Apr 13 15:12:20 2026 +0800
+
+    Include libraries in global.h
+
+commit c5212b2b9bf9c8af567cd41382f8e2b43a993a6e
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Mon Apr 13 15:10:11 2026 +0800
+
+    Fix display for Windows 10
+
+commit 3ae6e81eec5b000839b2de9a4733c4585a850117
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Mon Apr 13 14:54:28 2026 +0800
+
+    Fix display for Windows 10
+
+commit 5a1875673e301c3514e3f016e3592f1389265452
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Mon Apr 13 13:48:52 2026 +0800
+
+    Fix cmd validation in PersonalDashboard
+
+commit d9265b492d875455e94d848b2d3f776ab4ba0c9c
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 03:10:14 2026 +0800
+
+    fix input bugs in ManageMyHabits
+
+commit ff4f40f83adc5f9741b518f9d3d107552edca59f
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 02:52:58 2026 +0800
+
+    add SaveData to ManageMyHabits
+
+commit 5bd55a7e21f8c9693695cc2e498fb766b0ac1f2b
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 02:51:01 2026 +0800
+
+    update SoC
+
+commit cbd0e5c6349aa955beb9f7b6a96731ebc1e6b046
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 02:43:30 2026 +0800
+
+    implement SoC
+
+commit c80435bfef88a2bb0ec1b6ebd8989c88b4695f1f
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 01:41:18 2026 +0800
+
+    optimize some parts & move Menu func to main func
+
+commit f91092b39c5eaf6d9fbc7e989d489c4393d4a471
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 00:47:46 2026 +0800
+
+    Fix sort date cases, Update IsValidDate
+
+commit c5c2289cd570c3b2dd259942eb87c755f199ca44
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 00:28:00 2026 +0800
+
+    update Save Data
+
+commit 807379931c8a8bf42d016c7a6d6dd1033805e6f5
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Sat Apr 11 00:26:55 2026 +0800
+
+    add Save Data
+
+commit aba81747c6ffebd5adc29e4bf5c19c37a0f40042
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Fri Apr 10 03:21:01 2026 +0800
+
+    Remove DS_Store file
+
+commit 032459e42d13437b9c1087d8374c16e168f11c3a
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Fri Apr 10 03:19:51 2026 +0800
+
+    Update gitignore
+
+commit 934c261d9f326f3df2d35a1c86e9bdd33c82298c
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Fri Apr 10 03:19:05 2026 +0800
+
+    Update gitignore
+
+commit 283ee4b5162d7091392503d132257a0887a6e717
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Fri Apr 10 03:16:29 2026 +0800
+
+    PersonalDashboard: Best & Needs work habit, Fix Streak system, Fix biSearchDate
+
+commit c744db4fc712f19e7e5390f45b217b8fb276b886
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Fri Apr 10 01:35:59 2026 +0800
+
+    PersonalDashboard: Weekly Completion Rate
+
+commit a0a4efbb35eb9ecc786bff0c3e6fca41dcde222c
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Thu Apr 9 19:36:11 2026 +0800
+
+    PersonalDashboard: Today's habits
+
+commit 274ad115f5de5bb9e40edd38e1adb6f62a79abc9
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Thu Apr 9 18:56:31 2026 +0800
+
+    Fix Streak
+
+commit b398d22bd9982d6328acebc4bdd73854c03919a9
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Thu Apr 9 16:02:45 2026 +0800
+
+    Clear lines func, PerseonalDashborad: Previous Month feature
+
+commit 30bbdb4f7e08da1e13eee5766069feed0dd9452b
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Thu Apr 9 15:35:19 2026 +0800
+
+    Stop tracking test.cpp
+
+commit eb473962b3d0419f56f3405e2ae66b1ba3d3d86e
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Thu Apr 9 15:34:31 2026 +0800
+
+    Stop tracking test.cpp
+
+commit fabd68d1549419707f9b42dde0d55ceb8f47a577
+Author: kORNkin <yeemee.0012za@email.com>
+Date:   Thu Apr 9 15:22:38 2026 +0800
+
+    First commit
